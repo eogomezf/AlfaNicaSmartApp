@@ -54,8 +54,8 @@ export default function LevelSelect() {
 
   const handleLevelClick = (nivel) => {
     if (nivel.bloqueado) return;
-    if (nivel.id === 1) navigate("/nivel1/escucha-letra");
-    if (nivel.id === 2) navigate("/nivel2/puente-silabas");
+    if (nivel.id === 1) navigate("/nivel1");
+    if (nivel.id === 2) navigate("/nivel2");
   };
 
   return (
