@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Estilos base para AlfaNica */
+@layer base {
+  * {
+    @apply box-border;
+  }
+
+  body {
+    @apply m-0 p-0 min-h-screen;
+    background: linear-gradient(135deg, #ffb74d 0%, #66bb6a 50%, #42a5f5 100%);
+    font-family: "Comic Neue", "Comic Sans MS", cursive;
+  }
+}
+
+@layer components {
+  .game-container {
+    @apply min-h-screen p-4 flex flex-col items-center justify-center;
+  }
+
+  .game-card {
+    @apply bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-6 border-4 border-white;
+  }
+
+  .letter-button {
+    @apply text-4xl font-bold bg-alfanica-orange text-white rounded-full w-20 h-20 
+           flex items-center justify-center shadow-lg hover:scale-110 transition-transform;
+  }
+
+  .success-animation {
+    @apply animate-bounce-slow bg-green-500 text-white;
+  }
+}
+
+@layer utilities {
+  .text-shadow {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  }
+}

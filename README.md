@@ -1,45 +1,16 @@
-# 🦜 AlfaNica - Aprendizaje de Lectoescritura
+# React + Vite
 
-> Aplicación educativa para niños de nivel inicial (kínder) que enseña letras, sílabas y palabras mediante juegos interactivos, inspirada en el Guardabarranco, ave nacional de Nicaragua.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-![Versión](https://img.shields.io/badge/version-1.0.0-blue)
-![Plataforma](https://img.shields.io/badge/platform-Android-green)
-![Licencia](https://img.shields.io/badge/license-Propietaria-red)
+Currently, two official plugins are available:
 
----
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-## 📱 Descripción
+## React Compiler
 
-AlfaNica es una aplicación móvil desarrollada con **React + Capacitor** y **Supabase** como backend, diseñada específicamente para el sistema educativo nicaragüense. La app guía a los niños a través de 5 niveles progresivos:
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-| Nivel | Nombre | Enfoque |
-|:-----:|--------|---------|
-| 1 | 🎵 Descubriendo Letras | Reconocimiento de letras y sonidos |
-| 2 | 🌉 Ruta del Guardabarranco | Formación de sílabas |
-| 3 | 📖 El Sendero de Palabras | Lectura de palabras completas |
-| 4 | 🌋 Volcán de Historias | Comprensión de frases cortas |
-| 5 | 🦅 Alas de Futuro | Vocabulario de profesiones y certificación |
+## Expanding the ESLint configuration
 
----
-
-## 🛠️ Tecnologías Utilizadas
-
-| Tecnología | Uso |
-|------------|-----|
-| **React 18** | Biblioteca principal para la interfaz |
-| **Vite** | Build tool y desarrollo rápido |
-| **Capacitor** | Empaquetado para Android (APK) |
-| **Supabase** | Backend (autenticación, base de datos, almacenamiento) |
-| **TailwindCSS** | Estilos y diseño responsivo |
-| **React Router DOM** | Navegación entre pantallas |
-
-### 📦 Dependencias principales
-
-```json
-{
-  "react": "^18.2.0",
-  "react-router-dom": "^6.22.0",
-  "@supabase/supabase-js": "^2.39.0",
-  "@capacitor/core": "^5.7.0",
-  "@capacitor/android": "^5.7.0"
-}
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
