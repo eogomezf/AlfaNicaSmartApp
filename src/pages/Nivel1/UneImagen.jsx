@@ -239,9 +239,9 @@ export default function UneImagen() {
                     <div className="flex items-center gap-6">
                       <div className="text-7xl">{img.imagen}</div>
                       <div>
-                        <p className="text-2xl font-bold text-gray-800">
+                        {/* <p className="text-2xl font-bold text-gray-800">
                           {img.nombre}
-                        </p>
+                        </p> */}
                         {estaConectada && (
                           <p className="text-green-600 font-semibold mt-1">
                             ✓ Conectada con {conectados[img.id]}
@@ -249,7 +249,7 @@ export default function UneImagen() {
                         )}
                         {estaSeleccionada && !estaConectada && (
                           <p className="text-yellow-600 font-semibold mt-1 animate-pulse">
-                            👆 ¡Ahora toca la letra!
+                            👆 ¡Toca la letra!
                           </p>
                         )}
                       </div>
@@ -290,7 +290,7 @@ export default function UneImagen() {
                     <span className="text-7xl font-bold text-white">
                       {letraObj.letra}
                     </span>
-                    <div className="text-3xl mt-2">{letraObj.ejemplo}</div>
+                    {/* <div className="text-3xl mt-2">{letraObj.ejemplo}</div> */}
                     <p className="text-white/80 text-sm mt-2">
                       {letraUsada ? "✓ Ya usada" : "Toca aquí"}
                     </p>

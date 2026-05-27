@@ -1,7 +1,7 @@
 // src/pages/Nivel1/EscuchaLetra.jsx
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion"; // ✅ Importar motion
+import { motion, AnimatePresence } from "framer-motion";
 
 // Datos de letras
 const letrasData = [
@@ -41,7 +41,7 @@ export default function EscuchaLetra() {
   });
   const [canInteract, setCanInteract] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [completado, setCompletado] = useState(false); // ✅ Estado para pantalla de completado
+  const [completado, setCompletado] = useState(false);
 
   // Refs para controlar el audio
   const currentUtteranceRef = useRef(null);
@@ -95,9 +95,7 @@ export default function EscuchaLetra() {
       setFeedback({ show: false, isCorrect: false, message: "" });
       setCanInteract(true);
     } else {
-      // Completado el nivel - mostrar pantalla de celebración
       setCompletado(true);
-      // Guardar progreso
       localStorage.setItem(
         "alfanica_actividad_escucha-letra_completada",
         "true",
@@ -121,7 +119,6 @@ export default function EscuchaLetra() {
         message: `¡Correcto! La letra ${letra} suena como ${currentLetter.sonido} 🎉`,
       });
 
-      // Avanzar después de 1.5 segundos
       timeoutRef.current = setTimeout(() => {
         setFeedback({ show: false, isCorrect: false, message: "" });
         goToNextLetter();
@@ -138,7 +135,6 @@ export default function EscuchaLetra() {
       message: `❌ Ups... La letra ${letra} no es correcta. Intenta de nuevo.`,
     });
 
-    // Ocultar feedback después de 1.5 segundos
     timeoutRef.current = setTimeout(() => {
       setFeedback({ show: false, isCorrect: false, message: "" });
       setCanInteract(true);
@@ -146,7 +142,6 @@ export default function EscuchaLetra() {
   }, []);
 
   const handleSelectLetter = (letra, esCorrecta) => {
-    // No permitir interacción si está procesando o reproduciendo sonido
     if (!canInteract || feedback.show || isPlaying) return;
 
     if (esCorrecta) {
@@ -163,7 +158,6 @@ export default function EscuchaLetra() {
   };
 
   const handleFinish = () => {
-    // Limpiar timeouts
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
@@ -181,7 +175,9 @@ export default function EscuchaLetra() {
     };
   }, [stopSound]);
 
-  // ✅ Pantalla de completado MEJORADA con Framer Motion
+  const progreso = ((currentIndex + 1) / letrasData.length) * 100;
+
+  // Pantalla de completado
   if (completado) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center p-4">
@@ -195,13 +191,13 @@ export default function EscuchaLetra() {
             transition={{ duration: 0.5 }}
             className="text-7xl mb-4"
           >
-            🏆🎉🔊
+            🔊🏆🎉
           </motion.div>
           <h1 className="text-3xl font-bold text-green-600 mb-2">
-            ¡Actividad Completada!
+            ¡Escucha y Aprende!
           </h1>
           <p className="text-gray-600 mb-2">
-            Has aprendido {letrasData.length} letras
+            Aprendiste {letrasData.length} letras
           </p>
           <div className="bg-orange-100 rounded-2xl p-4 my-4">
             <p className="text-gray-600 text-sm">Tu puntaje</p>
@@ -209,7 +205,7 @@ export default function EscuchaLetra() {
               {score} puntos
             </div>
             <div className="flex justify-center gap-1 mt-2">
-              {[...Array(Math.min(5, Math.floor(score / 20)))].map((_, i) => (
+              {[...Array(Math.min(5, Math.floor(score / 10)))].map((_, i) => (
                 <motion.span
                   key={i}
                   initial={{ scale: 0 }}
@@ -243,8 +239,7 @@ export default function EscuchaLetra() {
             </button>
           </div>
           <p className="text-gray-500 text-sm mt-6">
-            🦜 "¡Una actividad completada! Sigue así para desbloquear la
-            siguiente"
+            🎧 "¡Escuchar es el primer paso para aprender!"
           </p>
         </motion.div>
       </div>
@@ -252,56 +247,74 @@ export default function EscuchaLetra() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-400 to-purple-500 p-4 flex items-center justify-center">
-      <div className="max-w-md w-full">
-        {/* Header */}
+    <div className="min-h-screen bg-gradient-to-br from-blue-400 to-purple-500 p-6">
+      <div className="max-w-2xl mx-auto">
+        {/* Header con botón volver y puntaje */}
         <div className="flex justify-between items-center mb-6">
           <button
             onClick={handleFinish}
-            className="bg-white/30 backdrop-blur-sm px-3 py-1 rounded-full text-white text-sm"
+            className="bg-white/30 backdrop-blur-sm px-4 py-2 rounded-full text-white font-semibold"
           >
-            ← Salir
+            ← Volver
           </button>
-          <div className="bg-white rounded-full px-4 py-2 shadow-md">
-            <span className="font-bold text-orange-500">⭐ {score} pts</span>
+          <div className="bg-white rounded-full px-6 py-2 shadow-md">
+            <span className="font-bold text-orange-500 text-xl">
+              ⭐ {score} pts
+            </span>
           </div>
         </div>
 
-        {/* Progreso */}
-        <div className="text-center mb-8">
-          <div className="text-sm text-white/80 mb-2">
-            Letra {currentIndex + 1} de {letrasData.length}
-          </div>
-          <div className="w-full bg-white/30 rounded-full h-2">
+        {/* Instrucciones */}
+        <motion.div
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="bg-white/90 rounded-2xl p-4 mb-6 text-center"
+        >
+          <p className="text-xl text-gray-700">
+            🔊 <strong>Escucha y Selecciona la Letra</strong>
+          </p>
+          <p className="text-gray-500 mt-1">
+            Toca el altavoz para escuchar el sonido, luego elige la letra
+            correcta
+          </p>
+        </motion.div>
+
+        {/* Mensaje flotante */}
+        <AnimatePresence>
+          {feedback.show && (
             <motion.div
-              className="bg-white rounded-full h-2"
-              initial={{ width: 0 }}
-              animate={{
-                width: `${((currentIndex + 1) / letrasData.length) * 100}%`,
-              }}
-              transition={{ duration: 0.3 }}
-            />
-          </div>
-        </div>
+              initial={{ opacity: 0, y: -50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -50 }}
+              className={`fixed top-20 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-full shadow-lg text-white font-bold text-lg ${
+                feedback.isCorrect ? "bg-green-500" : "bg-red-500"
+              }`}
+            >
+              {feedback.message}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Tarjeta principal */}
         <div className="bg-white rounded-3xl shadow-2xl p-8 text-center">
+          {/* Imagen de la letra */}
           <motion.div
             key={currentLetter.letra}
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="text-8xl mb-4"
+            className="text-8xl mb-6"
           >
             {currentLetter.imagen}
           </motion.div>
 
+          {/* Botón de sonido */}
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={handleReplaySound}
             disabled={!canInteract || feedback.show || isPlaying}
             className={`
-              w-32 h-32 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 
-              text-white text-6xl shadow-lg hover:scale-105 transition-all mb-6
+              w-40 h-40 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 
+              text-white text-7xl shadow-lg hover:scale-105 transition-all mb-4
               ${isPlaying ? "animate-pulse" : ""}
               disabled:opacity-50 disabled:cursor-not-allowed
             `}
@@ -309,13 +322,13 @@ export default function EscuchaLetra() {
             🔊
           </motion.button>
 
-          <p className="text-gray-500 mb-6">
+          <p className="text-gray-500 mb-8">
             {isPlaying
               ? "🎵 Escuchando..."
-              : "👆 Toca el altavoz para escuchar"}
+              : "👆 Toca el altavoz para escuchar la letra"}
           </p>
 
-          {/* Opciones */}
+          {/* Opciones de letras */}
           <div className="grid grid-cols-3 gap-4 mb-6">
             {options.map((opt, idx) => (
               <motion.button
@@ -323,29 +336,42 @@ export default function EscuchaLetra() {
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleSelectLetter(opt.letra, opt.esCorrecta)}
                 disabled={!canInteract || feedback.show || isPlaying}
-                className="text-5xl font-bold py-4 rounded-2xl transition-all transform bg-gray-100 text-gray-800 hover:bg-orange-100 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                className={`
+                  text-5xl font-bold py-6 rounded-2xl transition-all transform
+                  bg-gray-100 text-gray-800 hover:bg-orange-100 hover:scale-105
+                  disabled:opacity-50 disabled:cursor-not-allowed
+                `}
               >
                 {opt.letra}
               </motion.button>
             ))}
           </div>
+        </div>
 
-          {/* Feedback */}
-          <AnimatePresence>
-            {feedback.show && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className={`
-                  p-4 rounded-2xl
-                  ${feedback.isCorrect ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}
-                `}
-              >
-                <p className="font-semibold">{feedback.message}</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
+        {/* Barra de progreso en la parte inferior (estilo unificado) */}
+        <div className="mt-6">
+          <div className="flex justify-between text-white text-sm mb-1">
+            <span>
+              🎯 Letra {currentIndex + 1} de {letrasData.length}
+            </span>
+            <span>{Math.round(progreso)}%</span>
+          </div>
+          <div className="bg-white/30 rounded-full h-3">
+            <motion.div
+              className="bg-green-500 rounded-full h-3"
+              initial={{ width: 0 }}
+              animate={{ width: `${progreso}%` }}
+              transition={{ duration: 0.3 }}
+            />
+          </div>
+        </div>
+
+        {/* Consejo */}
+        <div className="mt-6 bg-white/20 rounded-2xl p-4">
+          <p className="text-white text-center text-sm">
+            💡 <strong>Consejo:</strong> Toca el altavoz para escuchar el sonido
+            de la letra, luego elige la letra correcta entre las opciones.
+          </p>
         </div>
       </div>
     </div>

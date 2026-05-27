@@ -1,5 +1,5 @@
 // src/pages/Nivel1/MemoriaLetras.jsx
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -16,14 +16,13 @@ const paresIniciales = [
 // Función para crear el mazo de cartas (cada par aparece dos veces)
 const crearMazo = () => {
   const mazo = [];
-  paresIniciales.forEach((par, idx) => {
+  paresIniciales.forEach((par) => {
     // Carta 1: Muestra la letra
     mazo.push({
       id: `${par.id}-letra`,
       parId: par.id,
       tipo: "letra",
       contenido: par.letra,
-      imagen: null,
       nombre: par.nombre,
       estaVolteada: false,
       estaEmparejada: false,
@@ -34,7 +33,6 @@ const crearMazo = () => {
       parId: par.id,
       tipo: "imagen",
       contenido: par.imagen,
-      imagen: par.imagen,
       nombre: par.nombre,
       estaVolteada: false,
       estaEmparejada: false,
@@ -46,18 +44,16 @@ const crearMazo = () => {
 
 export default function MemoriaLetras() {
   const navigate = useNavigate();
-  const [cartas, setCartas] = useState([]);
+
+  // ✅ Inicialización diferida - se ejecuta UNA SOLA vez al montar el componente
+  const [cartas, setCartas] = useState(() => crearMazo());
   const [indiceCartaSeleccionada, setIndiceCartaSeleccionada] = useState(null);
   const [puntaje, setPuntaje] = useState(0);
   const [mensaje, setMensaje] = useState(null);
   const [bloquearTablero, setBloquearTablero] = useState(false);
   const [juegoCompletado, setJuegoCompletado] = useState(false);
 
-  // Inicializar el juego
-  useEffect(() => {
-    reiniciarJuego();
-  }, []);
-
+  // ✅ Función para reiniciar el juego (se usa en el botón "Jugar de nuevo")
   const reiniciarJuego = () => {
     const nuevoMazo = crearMazo();
     setCartas(nuevoMazo);
@@ -207,6 +203,10 @@ export default function MemoriaLetras() {
     );
   }
 
+  // Calcular progreso
+  const paresEncontrados = cartas.filter((c) => c.estaEmparejada).length / 2;
+  const totalPares = paresIniciales.length;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-400 to-pink-500 p-6">
       <div className="max-w-3xl mx-auto">
@@ -302,16 +302,12 @@ export default function MemoriaLetras() {
             <motion.div
               className="bg-green-500 rounded-full h-4"
               initial={{ width: 0 }}
-              animate={{
-                width: `${(cartas.filter((c) => c.estaEmparejada).length / cartas.length) * 100}%`,
-              }}
+              animate={{ width: `${(paresEncontrados / totalPares) * 100}%` }}
               transition={{ duration: 0.3 }}
             />
           </div>
           <p className="text-center text-white mt-2 font-semibold">
-            Parejas encontradas:{" "}
-            {cartas.filter((c) => c.estaEmparejada).length / 2} de{" "}
-            {paresIniciales.length}
+            Parejas encontradas: {paresEncontrados} de {totalPares}
           </p>
         </div>
 

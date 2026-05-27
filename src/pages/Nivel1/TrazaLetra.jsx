@@ -326,6 +326,7 @@ export default function TrazaLetra() {
   };
 
   const handleEnd = (e) => {
+    console.log(e);
     if (estaArrastrando) {
       setEstaArrastrando(false);
       setPuntoActual(null);
@@ -377,6 +378,8 @@ export default function TrazaLetra() {
 
   const trazosRestantes =
     letraActual.conexiones.length - trazosCompletados.length;
+
+  console.log(trazosRestantes);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-400 to-indigo-500 p-6">
