@@ -96,10 +96,14 @@ export default function UneImagen() {
       // Verificar si completó todo
       if (Object.keys(conectados).length + 1 === imagenes.length) {
         setTimeout(() => {
-          localStorage.setItem("alfanica_nivel1_score", nuevoPuntaje);
+          // Cuando completa la actividad:
           localStorage.setItem(
             "alfanica_actividad_une-imagen_completada",
             "true",
+          );
+          localStorage.setItem(
+            "alfanica_puntaje_une-imagen",
+            puntaje.toString(),
           );
           navigate("/nivel1");
         }, 2000);

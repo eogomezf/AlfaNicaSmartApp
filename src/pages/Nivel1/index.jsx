@@ -1,7 +1,8 @@
+// src/pages/Nivel1/index.jsx
 import { useNavigate } from "react-router-dom";
 import { useState, useMemo } from "react";
+//import { motion } from 'framer-motion'  // ✅ Importación necesaria
 
-// Definir el orden de desbloqueo
 const actividades = [
   {
     id: "escucha-letra",
@@ -9,7 +10,8 @@ const actividades = [
     descripcion: "Escucha el sonido y toca la letra correcta",
     icono: "🎧",
     color: "bg-orange-500",
-    requerido: null, // Sin requisito, primera actividad
+    requerido: null,
+    clavePuntaje: "alfanica_puntaje_escucha-letra",
   },
   {
     id: "une-imagen",
@@ -17,7 +19,8 @@ const actividades = [
     descripcion: "Arrastra la imagen hacia su letra inicial",
     icono: "🔗",
     color: "bg-red-500",
-    requerido: "escucha-letra", // Requiere completar la primera
+    requerido: "escucha-letra",
+    clavePuntaje: "alfanica_puntaje_une-imagen",
   },
   {
     id: "traza-letra",
@@ -26,6 +29,7 @@ const actividades = [
     icono: "✏️",
     color: "bg-blue-500",
     requerido: "une-imagen",
+    clavePuntaje: "alfanica_puntaje_traza-letra",
   },
   {
     id: "memoria",
@@ -34,6 +38,7 @@ const actividades = [
     icono: "🃏",
     color: "bg-purple-500",
     requerido: "traza-letra",
+    clavePuntaje: "alfanica_puntaje_memoria",
   },
   {
     id: "ordena-letras",
@@ -42,6 +47,7 @@ const actividades = [
     icono: "📝",
     color: "bg-green-500",
     requerido: "memoria",
+    clavePuntaje: "alfanica_puntaje_ordena-letras",
   },
   {
     id: "busca-letra",
@@ -50,6 +56,7 @@ const actividades = [
     icono: "🕵️",
     color: "bg-yellow-500",
     requerido: "ordena-letras",
+    clavePuntaje: "alfanica_puntaje_busca-letra",
   },
   {
     id: "completa-palabra",
@@ -58,6 +65,7 @@ const actividades = [
     icono: "📖",
     color: "bg-pink-500",
     requerido: "busca-letra",
+    clavePuntaje: "alfanica_puntaje_completa-palabra",
   },
   {
     id: "canta-aprende",
@@ -66,54 +74,80 @@ const actividades = [
     icono: "🎤",
     color: "bg-teal-500",
     requerido: "completa-palabra",
+    clavePuntaje: "alfanica_puntaje_canta-aprende",
   },
 ];
 
-// Función pura que lee localStorage y devuelve el progreso
+// Función para cargar progreso y puntajes
 const cargarProgresoInicial = () => {
   const savedProgress = {};
+  let puntajeTotal = 0;
+
   for (let i = 0; i < actividades.length; i++) {
-    const key = `alfanica_actividad_${actividades[i].id}_completada`;
-    savedProgress[actividades[i].id] = localStorage.getItem(key) === "true";
+    const act = actividades[i];
+    const completadaKey = `alfanica_actividad_${act.id}_completada`;
+    const completada = localStorage.getItem(completadaKey) === "true";
+    savedProgress[act.id] = completada;
+
+    // Sumar puntaje si la actividad está completada
+    if (completada) {
+      const puntajeActividad = localStorage.getItem(act.clavePuntaje);
+      if (puntajeActividad) {
+        puntajeTotal += parseInt(puntajeActividad, 10);
+      }
+    }
   }
-  const puntaje = localStorage.getItem("alfanica_nivel1_score");
+
   return {
-    ...savedProgress,
-    puntaje: puntaje ? parseInt(puntaje, 10) : 0,
+    completadas: savedProgress,
+    puntajeTotal: puntajeTotal,
   };
 };
 
 export default function Nivel1() {
   const navigate = useNavigate();
-  const [progreso] = useState(cargarProgresoInicial);
-  //const [actividadesEstado, setActividadesEstado] = useState([]);
 
+  // Estado inicial con los datos cargados
+  const [progreso] = useState(cargarProgresoInicial);
+
+  // Calcular estado de cada actividad
   const actividadesEstado = useMemo(() => {
     return actividades.map((act) => {
-      const isCompleted = progreso[act.id] || false;
-      // Primera actividad o si la requerida está completada
+      const isCompleted = progreso.completadas[act.id] || false;
       const isUnlocked =
-        act.requerido === null || progreso[act.requerido] === true;
+        act.requerido === null || progreso.completadas[act.requerido] === true;
       return { ...act, completada: isCompleted, desbloqueada: isUnlocked };
     });
   }, [progreso]);
 
-  const handleActividadClick = (actividad) => {
-    if (!actividad.desbloqueada) {
-      alert(
-        `🔒 Para desbloquear "${actividad.titulo}", primero completa "${actividades.find((a) => a.id === actividad.requerido)?.titulo}"`,
-      );
-      return;
-    }
-    // Navegar a la actividad
-    navigate(`/nivel1/${actividad.id}`);
-  };
-
-  // Calcular progreso general
   const actividadesCompletadas = actividadesEstado.filter(
     (a) => a.completada,
   ).length;
   const porcentaje = (actividadesCompletadas / actividades.length) * 100;
+
+  const handleActividadClick = (actividad) => {
+    if (!actividad.desbloqueada) {
+      const actividadRequerida = actividades.find(
+        (a) => a.id === actividad.requerido,
+      );
+      alert(
+        `🔒 Para desbloquear "${actividad.titulo}", primero completa "${actividadRequerida?.titulo}"`,
+      );
+      return;
+    }
+
+    // Navegar según la actividad
+    navigate(`/nivel1/${actividad.id}`);
+    // if (actividad.id === "escucha-letra") navigate("/nivel1/escucha-letra");
+    // else if (actividad.id === "une-imagen") navigate("/nivel1/une-imagen");
+    // else if (actividad.id === "traza-letra") navigate("/nivel1/traza-letra");
+    // else {
+    //   // Para las demás, mostrar mensaje de construcción
+    //   alert(
+    //     `🚧 "${actividad.titulo}" estará disponible pronto. ¡Sigue avanzando!`,
+    //   );
+    // }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-100 to-yellow-100 p-4">
@@ -134,14 +168,12 @@ export default function Nivel1() {
           </h1>
           <p className="text-gray-600 mt-2">¡Aprende las letras jugando!</p>
 
-          {/* Mostrar puntaje total */}
-          {progreso.puntaje > 0 && (
-            <div className="mt-2 inline-block bg-orange-200 rounded-full px-4 py-1">
-              <span className="text-orange-700 font-bold">
-                ⭐ {progreso.puntaje} puntos acumulados
-              </span>
-            </div>
-          )}
+          {/* Mostrar puntaje TOTAL acumulado */}
+          <div className="mt-3 inline-block bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full px-6 py-2 shadow-lg">
+            <span className="text-white font-bold text-xl">
+              ⭐ {progreso.puntajeTotal} puntos totales
+            </span>
+          </div>
         </div>
 
         {/* Barra de progreso general */}
@@ -149,7 +181,7 @@ export default function Nivel1() {
           <div
             className="bg-orange-500 rounded-full h-3 transition-all duration-500"
             style={{ width: `${porcentaje}%` }}
-          ></div>
+          />
         </div>
         <p className="text-center text-gray-500 text-sm mb-8">
           Actividad {actividadesCompletadas + 1} de {actividades.length}
@@ -172,7 +204,7 @@ export default function Nivel1() {
                 className={`
                   relative bg-white rounded-2xl p-5 shadow-lg cursor-pointer transition-all transform hover:scale-105
                   ${isLocked ? "opacity-50 grayscale cursor-not-allowed" : "hover:shadow-2xl"}
-                  ${isCompleted ? "border-4 border-green-500" : ""}
+                  ${isCompleted ? "border-4 border-green-500" : "border-2 border-orange-200"}
                   ${isActive ? "ring-4 ring-orange-300 animate-pulse" : ""}
                 `}
               >
@@ -199,12 +231,12 @@ export default function Nivel1() {
                   </div>
                 )}
                 {isCompleted && (
-                  <div className="text-center mt-2 text-green-500 text-xs">
+                  <div className="text-center mt-2 text-green-500 text-xs font-semibold">
                     ✅ Completado
                   </div>
                 )}
                 {isActive && (
-                  <div className="text-center mt-2 text-orange-500 text-xs">
+                  <div className="text-center mt-2 text-orange-500 text-xs font-semibold animate-pulse">
                     🎯 ¡Jugar ahora!
                   </div>
                 )}
@@ -215,7 +247,7 @@ export default function Nivel1() {
 
         {/* Mensaje de motivación */}
         <div className="mt-8 text-center bg-orange-200/50 rounded-2xl p-4">
-          <p className="text-orange-700">
+          <p className="text-orange-700 font-medium">
             🦜{" "}
             {actividadesCompletadas === actividades.length
               ? "¡INCREÍBLE! Has completado todas las actividades del Nivel 1. ¡Eres un campeón!"

@@ -3,6 +3,9 @@ import LevelSelect from "./pages/LevelSelect";
 import Nivel1 from "./pages/Nivel1";
 import EscuchaLetra from "./pages/Nivel1/EscuchaLetra";
 import UneImagen from "./pages/Nivel1/UneImagen";
+import TrazaLetra from "./pages/Nivel1/TrazaLetra";
+import MemoriaLetras from "./pages/Nivel1/MemoriaLetras";
+
 import Nivel2 from "./pages/Nivel2";
 import ProfileSetup from "./pages/ProfileSetup";
 
@@ -16,6 +19,9 @@ function App() {
         <Route path="/nivel1/:actividad" element={<Nivel1 />} />
         <Route path="/nivel1/escucha-letra" element={<EscuchaLetra />} />
         <Route path="/nivel1/une-imagen" element={<UneImagen />} />
+        <Route path="/nivel1/traza-letra" element={<TrazaLetra />} />
+        <Route path="/nivel1/memoria" element={<MemoriaLetras />} />
+
         <Route path="/nivel2/:actividad" element={<Nivel2 />} />
         <Route path="/nivel2" element={<Nivel2 />} />
         <Route path="/nivel2/:actividad" element={<Nivel2 />} />
